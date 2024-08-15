@@ -1,24 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import RootLayout from "./layouts/root-layout";
+import Loader from "./apps/elements/loader";
+import { API_PATH } from "./globals/constants";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const Login = async () => {
+      try {
+        const res = await fetch(API_PATH + "api/v1/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: "adminka",
+            password: "dedSs@4d@1",
+          }),
+        });
+        const data = await res.json();
+        localStorage.setItem("token", data.token);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    Login();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="bg-bg-color">
+          <RootLayout />
+        </div>
+      )}
+    </>
   );
 }
 
